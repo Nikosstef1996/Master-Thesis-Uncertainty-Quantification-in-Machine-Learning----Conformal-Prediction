@@ -27,5 +27,8 @@ ham10000-fusion-comparison = "ham10000_multimodal.fusion_comparison:main"
 ham10000-attention-fusion = "ham10000_multimodal.attention_fusion:main"
 ham10000-conformal-attention = "ham10000_multimodal.conformal_attention_fusion:main"
 
+[tool.setuptools.package-dir]
+"" = "Multimodal Conformal Prediction"
+
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["Multimodal Conformal Prediction"]

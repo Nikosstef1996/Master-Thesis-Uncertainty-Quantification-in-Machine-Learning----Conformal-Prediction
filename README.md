@@ -24,7 +24,7 @@ regression/
   housing_cp_api/             California housing API example
   notebook/                   regression notebook
 
-src/
+Multimodal Conformal Prediction/
   conformal_prediction/       shared conformal prediction classes
   ham10000_multimodal/        HAM10000 multimodal ML code
 
@@ -45,16 +45,16 @@ The multimodal package supports:
 Main modules:
 
 ```text
-src/ham10000_multimodal/data.py
-src/ham10000_multimodal/model.py
-src/ham10000_multimodal/train.py
-src/ham10000_multimodal/evaluate.py
-src/ham10000_multimodal/predict.py
-src/ham10000_multimodal/random_forest.py
-src/ham10000_multimodal/fusion_comparison.py
-src/ham10000_multimodal/attention_fusion.py
-src/ham10000_multimodal/conformal_random_forest.py
-src/ham10000_multimodal/conformal_attention_fusion.py
+Multimodal Conformal Prediction/ham10000_multimodal/data.py
+Multimodal Conformal Prediction/ham10000_multimodal/model.py
+Multimodal Conformal Prediction/ham10000_multimodal/train.py
+Multimodal Conformal Prediction/ham10000_multimodal/evaluate.py
+Multimodal Conformal Prediction/ham10000_multimodal/predict.py
+Multimodal Conformal Prediction/ham10000_multimodal/random_forest.py
+Multimodal Conformal Prediction/ham10000_multimodal/fusion_comparison.py
+Multimodal Conformal Prediction/ham10000_multimodal/attention_fusion.py
+Multimodal Conformal Prediction/ham10000_multimodal/conformal_random_forest.py
+Multimodal Conformal Prediction/ham10000_multimodal/conformal_attention_fusion.py
 ```
 
 ## Install
