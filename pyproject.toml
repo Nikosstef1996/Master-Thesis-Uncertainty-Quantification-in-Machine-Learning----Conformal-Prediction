@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ham10000-multimodal"
+version = "0.1.0"
+description = "PyTorch image and metadata classifier for the HAM10000 dataset"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24,<2.0",
+  "pandas>=2.0",
+  "pillow>=10.0",
+  "scikit-learn>=1.3",
+  "torch>=2.1",
+  "torchvision>=0.16",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+ham10000-train = "ham10000_multimodal.train:main"
+ham10000-evaluate = "ham10000_multimodal.evaluate:main"
+ham10000-predict = "ham10000_multimodal.predict:main"
+ham10000-random-forest = "ham10000_multimodal.random_forest:main"
+ham10000-conformal-rf = "ham10000_multimodal.conformal_random_forest:main"
+ham10000-fusion-comparison = "ham10000_multimodal.fusion_comparison:main"
+ham10000-attention-fusion = "ham10000_multimodal.attention_fusion:main"
+ham10000-conformal-attention = "ham10000_multimodal.conformal_attention_fusion:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,60 @@
+# Python environments
+.conda-env/
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+
+# Local files
+.DS_Store
+.env
+
+# Datasets / images
+data/
+datasets/
+HAM10000_images*/
+*.jpg
+*.jpeg
+*.png
+
+# Large model / feature files
+*.pt
+*.pth
+*.joblib
+*.npz
+*.zip
+
+# HAM10000 dataset / derived dataset files
+HAM10000_metadata.csv
+ham10000_metadata_with_paths.csv
+hmnist_*.csv
+HAM10000_images*/
+*.jpg
+*.jpeg
+*.png
+
+# Training outputs / generated models
+runs/
+ag_multimodal_tutorial/
+outputs/
+*.pt
+*.pth
+*.joblib
+*.npz
+*.pkl
+*.ckpt
+models/
+**/models/
+
+# Local packaging/export folders
+git/
+git.zip
+price_of_books/
+
+# PDFs if you do not want reports in GitHub
+Multimodal_ML.pdf
