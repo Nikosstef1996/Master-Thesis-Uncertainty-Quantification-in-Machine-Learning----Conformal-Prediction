@@ -1,15 +1,76 @@
-# HAM10000 PyTorch Multimodal Classifier
+# Master Thesis Code: Conformal Prediction and Multimodal Learning
 
-This is a compact PyTorch project for training a 7-class HAM10000 skin-lesion classifier from:
+This repository contains the code used for experiments on uncertainty
+quantification with conformal prediction in:
 
-- dermatoscopic images
-- optional metadata: `age`, `sex`, `localization`
+- classification problems
+- regression problems
+- multimodal HAM10000 skin-lesion classification
 
-It is meant for research and education, not medical diagnosis.
+The repository contains code and notebooks only. Datasets, trained checkpoints,
+virtual environments, generated runs, and large feature/model files are ignored.
 
-## Dataset
+## Repository Structure
 
-Download HAM10000 only after reviewing and accepting its terms. The dataset is commonly distributed through Harvard Dataverse / ISIC and is non-commercial in the ISIC challenge context.
+```text
+classification/
+  CP/                         reusable classification conformal classes
+  app/                        classification API example
+  notebook/                   Iris and imbalanced-class notebooks
+  train.py
+
+regression/
+  CP/                         reusable regression conformal classes
+  housing_cp_api/             California housing API example
+  notebook/                   regression notebook
+
+src/
+  conformal_prediction/       shared conformal prediction classes
+  ham10000_multimodal/        HAM10000 multimodal ML code
+
+notebooks/
+  ham10000_multimodal_conformal_prediction.ipynb
+```
+
+## HAM10000 Multimodal Code
+
+The multimodal package supports:
+
+- PyTorch image and metadata classification
+- Random Forest on fused image and metadata features
+- fusion-strategy comparison
+- attention-based fusion
+- conformal prediction for Random Forest and attention-fusion models
+
+Main modules:
+
+```text
+src/ham10000_multimodal/data.py
+src/ham10000_multimodal/model.py
+src/ham10000_multimodal/train.py
+src/ham10000_multimodal/evaluate.py
+src/ham10000_multimodal/predict.py
+src/ham10000_multimodal/random_forest.py
+src/ham10000_multimodal/fusion_comparison.py
+src/ham10000_multimodal/attention_fusion.py
+src/ham10000_multimodal/conformal_random_forest.py
+src/ham10000_multimodal/conformal_attention_fusion.py
+```
+
+## Install
+
+From the repository root:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e .
+```
+
+## HAM10000 Dataset
+
+Download HAM10000 only after reviewing and accepting its terms.
 
 Useful references:
 
@@ -20,34 +81,21 @@ Useful references:
 Expected local layout:
 
 ```text
-data/ham10000/
-  HAM10000_metadata.csv
-  HAM10000_images_part_1/
-    ISIC_0024306.jpg
-    ...
-  HAM10000_images_part_2/
-    ...
+HAM10000_metadata.csv
+HAM10000_images_part_1/
+HAM10000_images_part_2/
 ```
 
-The code searches recursively under `--data-dir`, so a flat `images/` directory also works.
+These files are intentionally not uploaded to GitHub.
 
-## Install
+## Example Commands
 
-From this folder:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -e .
-```
-
-## Train
+Train the PyTorch multimodal model:
 
 ```bash
 ham10000-train \
-  --data-dir /path/to/data/ham10000 \
-  --metadata-csv /path/to/data/ham10000/HAM10000_metadata.csv \
+  --data-dir . \
+  --metadata-csv HAM10000_metadata.csv \
   --output-dir runs/ham10000-resnet18 \
   --backbone resnet18 \
   --pretrained \
@@ -55,83 +103,38 @@ ham10000-train \
   --batch-size 32
 ```
 
-## Smoke Test
-
-After installing the package, you can create a tiny synthetic dataset to check that your environment can run the code:
+Train the Random Forest multimodal model:
 
 ```bash
-python scripts/create_toy_ham10000.py --output-dir work/toy_ham10000
-
-ham10000-train \
-  --data-dir work/toy_ham10000 \
-  --metadata-csv work/toy_ham10000/HAM10000_metadata.csv \
-  --output-dir runs/toy \
-  --backbone resnet18 \
-  --epochs 1 \
-  --batch-size 8 \
-  --num-workers 0 \
-  --image-size 64
-```
-
-## Understand One Multimodal Batch
-
-This script shows the actual tensors used by the PyTorch model:
-
-```bash
-python scripts/walkthrough_multimodal_batch.py \
+ham10000-random-forest \
   --data-dir . \
   --metadata-csv HAM10000_metadata.csv \
-  --image-size 64 \
-  --batch-size 4
+  --output-dir outputs/ham10000-random-forest
 ```
 
-It prints:
-
-- image tensor shape, for example `(4, 3, 64, 64)`
-- metadata tensor shape, for example `(4, 19)`
-- labels shape
-- model output shape, for example `(4, 7)`
-
-For image-only training:
+Run fusion comparison:
 
 ```bash
-ham10000-train \
-  --data-dir /path/to/data/ham10000 \
-  --metadata-csv /path/to/data/ham10000/HAM10000_metadata.csv \
-  --no-metadata
+ham10000-fusion-comparison \
+  --features-npz outputs/ham10000-random-forest/fused_features.npz \
+  --output-dir outputs/ham10000-fusion-comparison
 ```
 
-Outputs include:
-
-- `best.pt`
-- `last.pt`
-- `config.json`
-- `history.csv`
-- `splits.csv`
-- `test_metrics.json`
-
-The split uses `lesion_id` when available so images of the same lesion do not leak across train/validation/test.
-
-## Evaluate
+Run attention fusion:
 
 ```bash
-ham10000-evaluate \
-  --checkpoint runs/ham10000-resnet18/best.pt \
-  --data-dir /path/to/data/ham10000 \
-  --metadata-csv /path/to/data/ham10000/HAM10000_metadata.csv \
-  --split test \
-  --predictions-csv runs/ham10000-resnet18/test_predictions.csv
+ham10000-attention-fusion \
+  --features-npz outputs/ham10000-random-forest/fused_features.npz \
+  --output-dir outputs/ham10000-attention-fusion
 ```
 
-## Predict One Image
+Run conformal prediction for attention fusion:
 
 ```bash
-ham10000-predict \
-  --checkpoint runs/ham10000-resnet18/best.pt \
-  --image /path/to/ISIC_0024306.jpg \
-  --age 55 \
-  --sex male \
-  --localization back
+ham10000-conformal-attention \
+  --attention-dir outputs/ham10000-attention-fusion \
+  --output-dir outputs/ham10000-attention-fusion/conformal_alpha_0_10 \
+  --alpha 0.10
 ```
 
 ## Labels
@@ -148,4 +151,6 @@ vasc   Vascular lesion
 
 ## Notes
 
-HAM10000 is imbalanced. This trainer uses class-weighted cross entropy and reports balanced accuracy, but serious experiments should also inspect per-class recall, calibration, and patient/lesion-level leakage.
+HAM10000 is strongly imbalanced. The experiments therefore report both standard
+accuracy and balanced accuracy, and conformal prediction is used to quantify
+uncertainty through prediction sets.
